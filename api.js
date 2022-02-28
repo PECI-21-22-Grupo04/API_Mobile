@@ -64,7 +64,7 @@ app.post('/createUser', (req, res) => {
     });
 });
 
-app.post('/createUser', (req, res) => {
+app.post('/selectUser', (req, res) => {
     // code 0 --> no errors, return user data
     // code 1 --> database error
     // code 2 --> user does not exist
