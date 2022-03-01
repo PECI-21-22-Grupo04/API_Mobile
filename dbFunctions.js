@@ -4,7 +4,8 @@ const dotenv = require('dotenv').config();
 
 module.exports = {
     createUser,
-    selectUser
+    selectUser,
+    deleteUser
 }
 
 // Connect to database (MUST USE LEGACY AUTHENTICATION METHOD (RETAIN MYSQL 5.X COMPATIBILITY))
@@ -23,20 +24,21 @@ dbconnection.connect((error) => {
 });
 
 
-//******************************************//
-//             Stored Procedures            //
-//******************************************//
-
+/*
+*******************************************
+            STORED PROCEDURES               
+*******************************************
+*/
 function createUser(mail, fName, lName, userKey) {
     return new Promise((resolve) => {
 
         var sql = 'CALL spCreateUser(?,?,?,?)';
 
         dbconnection.query(sql, [mail, fName, lName, userKey], (err, data) => {
-            if (err) {
+            if (err && err.errno==1062) {
                 resolve(1);
             }
-            else if (typeof data !== 'undefined' && data["affectedRows"] == 1) {
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 1) { 
                 resolve(0);
             }
             else {
@@ -65,8 +67,28 @@ function selectUser(mail, userKey) {
     });
 };
 
+function deleteUser(mail, fName, lName, userKey) {
+    return new Promise((resolve) => {
 
-//******************************************//
-//           USER DEFINED FUNCTIONS         //
-//******************************************//
+        var sql = 'CALL spDeleteUser(?,?)';
 
+        dbconnection.query(sql, [mail, userKey], (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 1) {
+                resolve(0);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+
+/*
+*******************************************
+            USER DEFINED FUNCTIONS                
+*******************************************
+*/

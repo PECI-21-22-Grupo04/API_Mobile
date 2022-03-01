@@ -21,45 +21,58 @@ const port = process.env.port || 8080;
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 
-//******************************************//
-//             API Endpoints                //
-//******************************************//
+/*
+*******************************************
+             API ENDPOINTS                
+*******************************************
+*/
 
 app.post('/createUser', (req, res) => {  
-    // code 0 --> no errors, user inserted in the database
-    // code 1 --> database error
-    // code 2 --> unexpected error
     dbF.createUser(req.body.email, req.body.fname, req.body.lname, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
-            res.json({code:1}) 
+            res.json({code:"An account already exists with this email"}) // code 1 --> Email already exists
         }
         else if(data == 2){
-            res.json({code:2}) 
+            res.json({code:"An error has occured. Please try again later"}) // code 2 --> Database error
         }
         else{
-            res.json({code:0});
+            res.json({code:0}); // code 0 --> No errors, insert was sucessful
         } 
     });
 });
 
+
 app.post('/selectUser', (req, res) => {
-    // code 0 --> no errors, return user data
-    // code 1 --> database error
-    // code 2 --> user does not exist or encrypt key is
     dbF.selectUser(req.body.email, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
-            res.json({code:1}) 
+            res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) 
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect 
         }
         else{
             var u_mail = data[0][0]["mail"];
             var u_fname = data[0][0]["fName"];
             var u_lname = data[0][0]["lName"];
-            res.json({code: 0, mail: u_mail, fname: u_fname, lname: u_lname});
+            res.json({code: 0, mail: u_mail, fname: u_fname, lname: u_lname}); // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
+app.post('/deleteUser', (req, res) => {
+    dbF.deleteUser(req.body.email, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code: 0}); // code 0 --> No errors, delete was sucessful
         } 
     });
 });
