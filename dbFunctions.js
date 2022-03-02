@@ -5,7 +5,9 @@ const dotenv = require('dotenv').config();
 module.exports = {
     createUser,
     selectUser,
-    deleteUser
+    deleteUser,
+    addUserInfo,
+    selectUserInfo
 }
 
 // Connect to database (MUST USE LEGACY AUTHENTICATION METHOD (RETAIN MYSQL 5.X COMPATIBILITY))
@@ -86,6 +88,43 @@ function deleteUser(mail, fName, lName, userKey) {
     });
 };
 
+function addUserInfo(mail, age, height, weight, fitness, pathologies, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spAddUserInfo(?,?,?,?,?,?,?)';
+
+        dbconnection.query(sql, [mail, age, height, weight, fitness, pathologies, userKey], (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 1) {
+                resolve(0);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function selectUserInfo(mail, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spAddUserInfo(?,?)';
+
+        dbconnection.query(sql, [mail, userKey], (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
+                resolve(0);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
 
 /*
 *******************************************

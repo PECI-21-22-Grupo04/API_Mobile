@@ -76,3 +76,40 @@ app.post('/deleteUser', (req, res) => {
         } 
     });
 });
+
+
+app.post('/addUserInfo', (req, res) => {
+    dbF.addUserInfo(req.body.email, req.body.age, req.body.height, req.body.weight, req.body.fitness, req.body.pathologies, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code: 0}); // code 0 --> No errors, user info was added sucessfully
+        } 
+    });
+});
+
+
+app.post('/selectUserInfo', (req, res) => {
+    dbF.selectUserInfo(req.body.email, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            var u_age = data[0][0]["u_age"];
+            var u_height = data[0][0]["u_height"];
+            var u_weight = data[0][0]["u_weight"];
+            var u_fitness = data[0][0]["u_fitness"];
+            var u_pathologies = data[0][0]["pathologies"];
+            res.json({code: 0, age: u_age, height: u_height, weight: u_weight, fitness: u_fitness, pathologies: u_pathologies}); // code 0 --> No errors, return user data
+        } 
+    });
+});
