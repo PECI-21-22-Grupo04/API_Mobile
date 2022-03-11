@@ -82,10 +82,10 @@ app.post('/addUserInfo', (req, res) => {
     dbF.addUserInfo(req.body.email, req.body.age, req.body.height, req.body.weight, req.body.fitness, req.body.pathologies, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
-            res.json({code:1}) // code 1 --> Database error
+            res.json({code:"An error has occured. Please try again later"}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:"An error has occured. Please try again later"}) // code 2 --> User does not exist or encrypt key is incorrect
         }
         else{
             res.json({code: 0}); // code 0 --> No errors, user info was added sucessfully

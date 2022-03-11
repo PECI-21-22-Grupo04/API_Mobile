@@ -69,7 +69,7 @@ function selectUser(mail, userKey) {
     });
 };
 
-function deleteUser(mail, fName, lName, userKey) {
+function deleteUser(mail, userKey) {
     return new Promise((resolve) => {
 
         var sql = 'CALL spDeleteUser(?,?)';
