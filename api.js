@@ -31,10 +31,10 @@ app.post('/createUser', (req, res) => {
     dbF.createUser(req.body.email, req.body.fname, req.body.lname, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
-            res.json({code:"An account already exists with this email"}) // code 1 --> Email already exists
+            res.json({code:"Já existe uma conta com este email"}) // code 1 --> Email already exists
         }
         else if(data == 2){
-            res.json({code:"An error has occured. Please try again later"}) // code 2 --> Database error
+            res.json({code:"Ocorreu um erro. Por favor tente mais tarde"}) // code 2 --> Database error
         }
         else{
             res.json({code:0}); // code 0 --> No errors, insert was sucessful
@@ -82,10 +82,10 @@ app.post('/addUserInfo', (req, res) => {
     dbF.addUserInfo(req.body.email, req.body.age, req.body.height, req.body.weight, req.body.fitness, req.body.pathologies, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
-            res.json({code:"An error has occured. Please try again later"}) // code 1 --> Database error
+            res.json({code:"Ocorreu um erro. Por favor tente mais tarde"}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:"An error has occured. Please try again later"}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:"Ocorreu um erro. Por favor tente mais tarde"}) // code 2 --> User does not exist or encrypt key is incorrect
         }
         else{
             res.json({code: 0}); // code 0 --> No errors, user info was added sucessfully
