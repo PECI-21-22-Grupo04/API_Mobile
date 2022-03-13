@@ -3,11 +3,11 @@ const mysql = require('mysql');
 const dotenv = require('dotenv').config();
 
 module.exports = {
-    createUser,
-    selectUser,
-    deleteUser,
-    addUserInfo,
-    selectUserInfo
+    createClient,
+    selectClient,
+    deleteClient,
+    addClientInfo,
+    selectClientInfo
 }
 
 // Connect to database (MUST USE LEGACY AUTHENTICATION METHOD (RETAIN MYSQL 5.X COMPATIBILITY))
@@ -31,10 +31,10 @@ dbconnection.connect((error) => {
             STORED PROCEDURES               
 *******************************************
 */
-function createUser(mail, fName, lName, userKey) {
+function createClient(mail, fName, lName, userKey) {
     return new Promise((resolve) => {
 
-        var sql = 'CALL spCreateUser(?,?,?,?)';
+        var sql = 'CALL spCreateClient(?,?,?,?)';
 
         dbconnection.query(sql, [mail, fName, lName, userKey], (err, data) => {
             if (err && err.errno==1062) {
@@ -50,10 +50,10 @@ function createUser(mail, fName, lName, userKey) {
     });
 };
 
-function selectUser(mail, userKey) {
+function selectClient(mail, userKey) {
     return new Promise((resolve) => {
 
-        var sql = 'CALL spSelectUser(?,?)';
+        var sql = 'CALL spSelectClient(?,?)';
 
         dbconnection.query(sql, [mail, userKey], (err, data) => {
             if (err) {
@@ -69,10 +69,10 @@ function selectUser(mail, userKey) {
     });
 };
 
-function deleteUser(mail, userKey) {
+function deleteClient(mail, userKey) {
     return new Promise((resolve) => {
 
-        var sql = 'CALL spDeleteUser(?,?)';
+        var sql = 'CALL spDeleteClient(?,?)';
 
         dbconnection.query(sql, [mail, userKey], (err, data) => {
             if (err) {
@@ -88,10 +88,10 @@ function deleteUser(mail, userKey) {
     });
 };
 
-function addUserInfo(mail, age, height, weight, fitness, pathologies, userKey) {
+function addClientInfo(mail, age, height, weight, fitness, pathologies, userKey) {
     return new Promise((resolve) => {
 
-        var sql = 'CALL spAddUserInfo(?,?,?,?,?,?,?)';
+        var sql = 'CALL spAddClientInfo(?,?,?,?,?,?,?)';
 
         dbconnection.query(sql, [mail, age, height, weight, fitness, pathologies, userKey], (err, data) => {
             if (err) {
@@ -107,10 +107,10 @@ function addUserInfo(mail, age, height, weight, fitness, pathologies, userKey) {
     });
 };
 
-function selectUserInfo(mail, userKey) {
+function selectClientInfo(mail, userKey) {
     return new Promise((resolve) => {
 
-        var sql = 'CALL spAddUserInfo(?,?)';
+        var sql = 'CALL spSelectClientInfo(?,?)';
 
         dbconnection.query(sql, [mail, userKey], (err, data) => {
             if (err) {

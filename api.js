@@ -27,8 +27,8 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 *******************************************
 */
 
-app.post('/createUser', (req, res) => {  
-    dbF.createUser(req.body.email, req.body.fname, req.body.lname, process.env.DB_ENCRYPTKEY)
+app.post('/createClient', (req, res) => {  
+    dbF.createClient(req.body.email, req.body.fname, req.body.lname, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:"Já existe uma conta com este email"}) // code 1 --> Email already exists
@@ -43,8 +43,8 @@ app.post('/createUser', (req, res) => {
 });
 
 
-app.post('/selectUser', (req, res) => {
-    dbF.selectUser(req.body.email, process.env.DB_ENCRYPTKEY)
+app.post('/selectClient', (req, res) => {
+    dbF.selectClient(req.body.email, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:1}) // code 1 --> Database error
@@ -62,8 +62,8 @@ app.post('/selectUser', (req, res) => {
 });
 
 
-app.post('/deleteUser', (req, res) => {
-    dbF.deleteUser(req.body.email, process.env.DB_ENCRYPTKEY)
+app.post('/deleteClient', (req, res) => {
+    dbF.deleteClient(req.body.email, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:1}) // code 1 --> Database error
@@ -78,8 +78,8 @@ app.post('/deleteUser', (req, res) => {
 });
 
 
-app.post('/addUserInfo', (req, res) => {
-    dbF.addUserInfo(req.body.email, req.body.age, req.body.height, req.body.weight, req.body.fitness, req.body.pathologies, process.env.DB_ENCRYPTKEY)
+app.post('/addClientInfo', (req, res) => {
+    dbF.addClientInfo(req.body.email, req.body.age, req.body.height, req.body.weight, req.body.fitness, req.body.pathologies, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:"Ocorreu um erro. Por favor tente mais tarde"}) // code 1 --> Database error
@@ -94,8 +94,8 @@ app.post('/addUserInfo', (req, res) => {
 });
 
 
-app.post('/selectUserInfo', (req, res) => {
-    dbF.selectUserInfo(req.body.email, process.env.DB_ENCRYPTKEY)
+app.post('/selectClientInfo', (req, res) => {
+    dbF.selectClientInfo(req.body.email, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:1}) // code 1 --> Database error
@@ -104,10 +104,10 @@ app.post('/selectUserInfo', (req, res) => {
             res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
         }
         else{
-            var u_age = data[0][0]["u_age"];
-            var u_height = data[0][0]["u_height"];
-            var u_weight = data[0][0]["u_weight"];
-            var u_fitness = data[0][0]["u_fitness"];
+            var u_age = data[0][0]["age"];
+            var u_height = data[0][0]["height"];
+            var u_weight = data[0][0]["weight"];
+            var u_fitness = data[0][0]["fitness"];
             var u_pathologies = data[0][0]["pathologies"];
             res.json({code: 0, age: u_age, height: u_height, weight: u_weight, fitness: u_fitness, pathologies: u_pathologies}); // code 0 --> No errors, return user data
         } 
