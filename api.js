@@ -35,16 +35,26 @@ app.post('/selectClient', (req, res) => {
             res.json({code:2}) /* code 2 --> User does not exist or encrypt key is incorrect */
         }
         else{
-            var u_mail = result[0][0]["mail"];
-            var u_fname = result[0][0]["fName"];
-            var u_lname = result[0][0]["lName"];
-            res.json({code: 0, msg:"Uma conta já existe com este email", mail: u_mail, fname: u_fname, lname: u_lname}); /* code 0 --> No errors, return user data */
+            var c_mail = result[0][0]["mail"];
+            var c_fname = result[0][0]["firstName"];
+            var c_lname = result[0][0]["lastName"];
+            var c_birthdate = result[0][0]["birthDate"];
+            var c_sex = result[0][0]["sex"];
+            var c_street = result[0][0]["street"];
+            var c_postCode = result[0][0]["postCode"];
+            var c_city = result[0][0]["city"];
+            var c_country = result[0][0]["country"];
+            var c_pathologies = result[0][0]["pathologies"];
+            res.json({code: 0, msg:"Uma conta já existe com este email", mailC: c_mail, firstNameC: c_fname, lastNameC: c_lname, birthdateC: c_birthdate, sexC: c_sex, streetC: c_street, postCodeC: c_postCode, cityC: c_city, countryC: c_country, pahtologiesC: c_pathologies}); /* code 0 --> No errors, return user data */
         } 
     });
 });
 
 app.post('/createClient', (req, res) => {  
-    dbF.createClient(req.body.email, req.body.fname, req.body.lname, req.body.birthdate, req.body.sex, req.body.street, req.body.postCode, req.body.city, req.body.country, process.env.DB_ENCRYPTKEY).then((result) => {
+    const dataValues = (req.body.birthdate.split('/'));
+    formattedBirthdate = dataValues[2]+"-"+dataValues[1]+"-"+dataValues[0];
+
+    dbF.createClient(req.body.email, req.body.fname, req.body.lname, formattedBirthdate, req.body.sex, req.body.street, req.body.postCode, req.body.city, req.body.country, process.env.DB_ENCRYPTKEY).then((result) => {
         if(result == 1){
             res.json({code:"Já existe uma conta com este email"}) // code 1 --> Email already exists
         }
