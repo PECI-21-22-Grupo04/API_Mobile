@@ -50,12 +50,12 @@ function selectClient(mail, userKey) {
     });
 };
 
-function createClient(mail, fName, lName, birthdate, sex, street, postCode, city, country, nif, userKey) {
+function createClient(mail, fName, lName, birthdate, sex, street, postCode, city, country, userKey) {
     return new Promise((resolve) => {
 
         var sql = 'CALL spCreateClient(?,?,?,?,?,?,?,?,?,?,?)';
 
-        dbconnection.query(sql, [mail, fName, lName, birthdate, sex, street, postCode, city, country, nif, userKey], (err, data) => {
+        dbconnection.query(sql, [mail, fName, lName, birthdate, sex, street, postCode, city, country, userKey], (err, data) => {
             if (err && err.errno==1062) {
                 resolve(1);
             }

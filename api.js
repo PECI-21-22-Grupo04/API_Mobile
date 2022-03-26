@@ -44,7 +44,7 @@ app.post('/selectClient', (req, res) => {
 });
 
 app.post('/createClient', (req, res) => {  
-    dbF.createClient(req.body.email, req.body.fname, req.body.lname, req.body.birthdate, req.body.sex, req.body.street, req.body.postCode, req.body.city, req.body.country, req.body.nif, process.env.DB_ENCRYPTKEY).then((result) => {
+    dbF.createClient(req.body.email, req.body.fname, req.body.lname, req.body.birthdate, req.body.sex, req.body.street, req.body.postCode, req.body.city, req.body.country, process.env.DB_ENCRYPTKEY).then((result) => {
         if(result == 1){
             res.json({code:"Já existe uma conta com este email"}) // code 1 --> Email already exists
         }
