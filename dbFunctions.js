@@ -1,16 +1,16 @@
-// Import utilities
+/* Import utilities */
 const mysql = require('mysql');
 const dotenv = require('dotenv').config();
 
 module.exports = {
-    createClient,
     selectClient,
+    createClient,
     deleteClient,
     addClientInfo,
     selectClientInfo
 }
 
-// Connect to database (MUST USE LEGACY AUTHENTICATION METHOD (RETAIN MYSQL 5.X COMPATIBILITY))
+/* Connect to database (MUST USE LEGACY AUTHENTICATION METHOD (RETAIN MYSQL 5.X COMPATIBILITY)) */
 const dbconnection = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -19,7 +19,6 @@ const dbconnection = mysql.createConnection({
 });
 
 dbconnection.connect((error) => {
-
     if (error) {
         console.log("ERROR: Problems connecting to database!");
     }
@@ -31,17 +30,18 @@ dbconnection.connect((error) => {
             STORED PROCEDURES               
 *******************************************
 */
-function createClient(mail, fName, lName, userKey) {
+function selectClient(mail, userKey) {
     return new Promise((resolve) => {
 
-        var sql = 'CALL spCreateClient(?,?,?,?)';
+        var sql = 'CALL spSelectClient(?,?)';
 
-        dbconnection.query(sql, [mail, fName, lName, userKey], (err, data) => {
-            if (err && err.errno==1062) {
+        dbconnection.query(sql, [mail, userKey], (err, data) => {
+            
+            if (err) {
                 resolve(1);
             }
-            else if (typeof data !== 'undefined' && data["affectedRows"] == 1) { 
-                resolve(0);
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
+                resolve(data);
             }
             else {
                 resolve(2);
@@ -50,17 +50,17 @@ function createClient(mail, fName, lName, userKey) {
     });
 };
 
-function selectClient(mail, userKey) {
+function createClient(mail, fName, lName, birthdate, sex, street, postCode, city, country, nif, userKey) {
     return new Promise((resolve) => {
 
-        var sql = 'CALL spSelectClient(?,?)';
+        var sql = 'CALL spCreateClient(?,?,?,?,?,?,?,?,?,?,?)';
 
-        dbconnection.query(sql, [mail, userKey], (err, data) => {
-            if (err) {
+        dbconnection.query(sql, [mail, fName, lName, birthdate, sex, street, postCode, city, country, nif, userKey], (err, data) => {
+            if (err && err.errno==1062) {
                 resolve(1);
             }
-            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
-                resolve(data);
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 0) { 
+                resolve(0);
             }
             else {
                 resolve(2);
@@ -78,7 +78,7 @@ function deleteClient(mail, userKey) {
             if (err) {
                 resolve(1);
             }
-            else if (typeof data !== 'undefined' && data["affectedRows"] == 1) {
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 0) {
                 resolve(0);
             }
             else {
@@ -88,16 +88,15 @@ function deleteClient(mail, userKey) {
     });
 };
 
-function addClientInfo(mail, age, height, weight, fitness, pathologies, userKey) {
+function addClientInfo(mail, height, weight, fitness, bmi, pathologies, userKey) {
     return new Promise((resolve) => {
 
         var sql = 'CALL spAddClientInfo(?,?,?,?,?,?,?)';
-
-        dbconnection.query(sql, [mail, age, height, weight, fitness, pathologies, userKey], (err, data) => {
+        dbconnection.query(sql, [mail, height, weight, fitness, bmi, pathologies, userKey], (err, data) => {
             if (err) {
                 resolve(1);
             }
-            else if (typeof data !== 'undefined' && data["affectedRows"] == 1) {
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 0) {
                 resolve(0);
             }
             else {
