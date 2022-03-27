@@ -56,10 +56,10 @@ app.post('/createClient', (req, res) => {
 
     dbF.createClient(req.body.email, req.body.fname, req.body.lname, formattedBirthdate, req.body.sex, req.body.street, req.body.postCode, req.body.city, req.body.country, process.env.DB_ENCRYPTKEY).then((result) => {
         if(result == 1){
-            res.json({code:"Já existe uma conta com este email"}) // code 1 --> Email already exists
+            res.json({msg:"Já existe uma conta com este email"}) // code 1 --> Email already exists
         }
         else if(result == 2){
-            res.json({code:"Ocorreu um erro. Por favor tente mais tarde"}) // code 2 --> Database error
+            res.json({msg:"Ocorreu um erro. Por favor tente mais tarde"}) // code 2 --> Database error
         }
         else{
             res.json({code:0}); // code 0 --> No errors, insert was sucessful
