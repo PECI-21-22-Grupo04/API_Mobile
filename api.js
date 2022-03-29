@@ -83,7 +83,7 @@ app.post('/deleteClient', (req, res) => {
 
 
 app.post('/addClientInfo', (req, res) => {
-    dbF.addClientInfo(req.body.email, req.body.height, req.body.weight, req.body.fitness, req.body.bmi, req.body.pathologies, process.env.DB_ENCRYPTKEY)
+    dbF.addClientInfo(req.body.email, req.body.height, req.body.weight, req.body.fitness,  parseInt(req.body.bmi), req.body.pathologies, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:"Ocorreu um erro. Por favor tente mais tarde"}) // code 1 --> Database error
