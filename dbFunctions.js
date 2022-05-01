@@ -7,7 +7,18 @@ module.exports = {
     createClient,
     deleteClient,
     addClientInfo,
-    selectClientInfo
+    selectClientInfo,
+    finalizeClientPayment,
+    associateInstructor,
+    clientReviewInstructor,
+    selectClientPaymentHistory,
+    selectClientInstructorHistory,
+    addClientRewards,
+    selectClientRewards,
+    selectClientPrograms,
+    selectAvailableInstructors,
+    selectDefaultExercises,
+    selectDefaultPrograms
 }
 
 /* Connect to database (MUST USE LEGACY AUTHENTICATION METHOD (RETAIN MYSQL 5.X COMPATIBILITY)) */
@@ -93,7 +104,7 @@ function addClientInfo(mail, height, weight, fitness, bmi, pathologies, userKey)
 
         var sql = 'CALL spAddClientInfo(?,?,?,?,?,?,?)';
         dbconnection.query(sql, [mail, height, weight, fitness, bmi, pathologies, userKey], (err, data) => {
-            if (err) {
+            if (err && err.errno==1305) {
                 resolve(1);
             }
             else if (typeof data !== 'undefined' && data["affectedRows"] == 0) {
@@ -116,6 +127,25 @@ function selectClientInfo(mail, userKey) {
                 resolve(1);
             }
             else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
+                resolve(data);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function finalizeClientPayment(mail, modality, amount, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spFinalizeClientPayment(?,?,?,?)';
+
+        dbconnection.query(sql, [mail, modality, amount, userKey], (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 0) { 
                 resolve(0);
             }
             else {
@@ -125,6 +155,196 @@ function selectClientInfo(mail, userKey) {
     });
 };
 
+function associateInstructor(clientEmail, instructorEmail, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spAssociateInstructor(?,?,?)';
+
+        dbconnection.query(sql, [clientEmail, instructorEmail, userKey], (err, data) => {
+            if (err && err.errno==1062) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 0) { 
+                resolve(0);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function clientReviewInstructor(clientEmail, instructorEmail, rating, review, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spClientReviewInstructor(?,?,?,?,?)';
+
+        dbconnection.query(sql, [clientEmail, instructorEmail, rating, review, userKey], (err, data) => {
+            if (err && err.errno==1062) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 0) { 
+                resolve(0);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function selectClientPaymentHistory(mail, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spSelectClientPaymentHistory(?,?)';
+
+        dbconnection.query(sql, [mail, userKey], (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
+                resolve(data);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function selectClientInstructorHistory(mail, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spSelectClientInstructorHistory(?,?)';
+
+        dbconnection.query(sql, [mail, userKey], (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
+                resolve(data);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function addClientRewards(mail, rewardID, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spAddClientRewards(?,?,?)';
+
+        dbconnection.query(sql, [mail, rewardID, userKey], (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 0) {
+                resolve(0);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function selectClientRewards(mail, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spSelectClientRewards(?,?)';
+
+        dbconnection.query(sql, [mail, userKey], (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
+                resolve(data);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function  selectClientPrograms(mail, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL  spSelectClientPrograms(?,?)';
+
+        dbconnection.query(sql, [mail, userKey], (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
+                resolve(data);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+
+function  selectAvailableInstructors(userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL  spSelectAvailableInstructors(?)';
+
+        dbconnection.query(sql, [userKey], (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
+                resolve(data);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function  selectDefaultExercises() {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL  spSelectDefaultExercises()';
+
+        dbconnection.query(sql, (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
+                resolve(data);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function  selectDefaultPrograms() {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL  spSelectDefaultExercises()';
+
+        dbconnection.query(sql, (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
+                resolve(data);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
 /*
 *******************************************
             USER DEFINED FUNCTIONS                

@@ -44,8 +44,9 @@ app.post('/selectClient', (req, res) => {
             var c_postCode = result[0][0]["postCode"];
             var c_city = result[0][0]["city"];
             var c_country = result[0][0]["country"];
+            var c_registerDate = result[0][0]["registerDate"];
             var c_pathologies = result[0][0]["pathologies"];
-            res.json({code: 0, msg:"Uma conta já existe com este email", mailC: c_mail, firstNameC: c_fname, lastNameC: c_lname, birthdateC: c_birthdate, sexC: c_sex, streetC: c_street, postCodeC: c_postCode, cityC: c_city, countryC: c_country, pahtologiesC: c_pathologies}); /* code 0 --> No errors, return user data */
+            res.json({code: 0, msg:"Uma conta já existe com este email", mailC: c_mail, firstNameC: c_fname, lastNameC: c_lname, birthdateC: c_birthdate, sexC: c_sex, streetC: c_street, postCodeC: c_postCode, cityC: c_city, countryC: c_country, registerDateC: c_registerDate, pathologiesC: c_pathologies}); /* code 0 --> No errors, return user data */
         } 
     });
 });
@@ -86,7 +87,7 @@ app.post('/addClientInfo', (req, res) => {
     dbF.addClientInfo(req.body.email, req.body.height, req.body.weight, req.body.fitness,  parseInt(req.body.bmi), req.body.pathologies, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
-            res.json({code:"Ocorreu um erro. Por favor tente mais tarde"}) // code 1 --> Database error
+            res.json({code:"O utilizador não existe!"}) // code 1 --> Database error
         }
         else if(data == 2){
             res.json({code:"Ocorreu um erro. Por favor tente mais tarde"}) // code 2 --> User does not exist or encrypt key is incorrect
@@ -108,12 +109,188 @@ app.post('/selectClientInfo', (req, res) => {
             res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
         }
         else{
-            var u_age = data[0][0]["age"];
-            var u_height = data[0][0]["height"];
-            var u_weight = data[0][0]["weight"];
-            var u_fitness = data[0][0]["fitness"];
-            var u_pathologies = data[0][0]["pathologies"];
-            res.json({code: 0, age: u_age, height: u_height, weight: u_weight, fitness: u_fitness, pathologies: u_pathologies}); // code 0 --> No errors, return user data
+            var c_age = data[0][0]["age"];
+            var c_height = data[0][0]["height"];
+            var c_weight = data[0][0]["weight"];
+            var c_fitness = data[0][0]["fitness"];
+            var c_pathologies = data[0][0]["pathologies"];
+            res.json({code: 0, age: c_age, height: c_height, weight: c_weight, fitness: c_fitness, pathologies: c_pathologies}); // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
+app.post('/finalizeClientPayment', (req, res) => {
+    dbF.finalizeClientPayment(req.body.email, req.body.modality, req.body.amount, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code:0}) // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
+app.post('/associateInstructor', (req, res) => {
+    dbF.associateInstructor(req.body.clientEmail, req.body.instructorEmail, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code:0}) // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
+app.post('/clientReviewInstructor', (req, res) => {
+    dbF.clientReviewInstructor(req.body.clientEmail, req.body.instructorEmail, req.body.rating, req.body.review, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code:0}) // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
+app.post('/selectClientPaymentHistory', (req, res) => {
+    dbF.selectClientPaymentHistory(req.body.mail, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> User does not exist or encrypt key is incorrect
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> Database error
+        }
+        else{
+            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
+app.post('/selectClientInstructorHistory', (req, res) => {
+    dbF.selectClientInstructorHistory(req.body.mail, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
+app.post('/addClientRewards', (req, res) => {
+    dbF.addClientRewards(req.body.mail, req.body.reward, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code:0}) // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
+app.post('/selectClientRewards', (req, res) => {
+    dbF.selectClientRewards(req.body.mail, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
+app.post('/selectClientPrograms', (req, res) => {
+    dbF.selectClientPrograms()
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
+app.post('/selectAvailableInstructors', (req, res) => {
+    dbF.selectAvailableInstructors()
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
+app.post('/selectDefaultExercises', (req, res) => {
+    dbF.selectDefaultExercises()
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
+app.post('/selectDefaultPrograms', (req, res) => {
+    dbF.selectDefaultPrograms()
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
         } 
     });
 });
