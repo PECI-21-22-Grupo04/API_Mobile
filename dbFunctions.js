@@ -21,7 +21,6 @@ module.exports = {
     selectDefaultPrograms
 }
 
-/* Connect to database (MUST USE LEGACY AUTHENTICATION METHOD (RETAIN MYSQL 5.X COMPATIBILITY)) */
 const dbconnection = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -136,16 +135,16 @@ function selectClientInfo(mail, userKey) {
     });
 };
 
-function finalizeClientPayment(mail, modality, amount, userKey) {
+function finalizeClientPayment(mail, modality, amount, transID, userKey) {
     return new Promise((resolve) => {
 
-        var sql = 'CALL spFinalizeClientPayment(?,?,?,?)';
+        var sql = 'CALL spFinalizeClientPayment(?,?,?,?,?)';
 
-        dbconnection.query(sql, [mail, modality, amount, userKey], (err, data) => {
+        dbconnection.query(sql, [mail, modality, amount, transID, userKey], (err, data) => {
             if (err) {
                 resolve(1);
             }
-            else if (typeof data !== 'undefined' && data["affectedRows"] == 0) { 
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 1) { 
                 resolve(0);
             }
             else {

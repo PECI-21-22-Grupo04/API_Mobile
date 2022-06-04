@@ -46,7 +46,8 @@ app.post('/selectClient', (req, res) => {
             var c_country = result[0][0]["country"];
             var c_registerDate = result[0][0]["registerDate"];
             var c_pathologies = result[0][0]["pathologies"];
-            res.json({code: 0, msg:"Uma conta já existe com este email", mailC: c_mail, firstNameC: c_fname, lastNameC: c_lname, birthdateC: c_birthdate, sexC: c_sex, streetC: c_street, postCodeC: c_postCode, cityC: c_city, countryC: c_country, registerDateC: c_registerDate, pathologiesC: c_pathologies}); /* code 0 --> No errors, return user data */
+            var c_imagePath = result[0][0]["imagePath"];
+            res.json({code: 0, msg:"Uma conta já existe com este email", mailC: c_mail, firstNameC: c_fname, lastNameC: c_lname, birthdateC: c_birthdate, sexC: c_sex, streetC: c_street, postCodeC: c_postCode, cityC: c_city, countryC: c_country, registerDateC: c_registerDate, pathologiesC: c_pathologies, imagePathC: c_imagePath}); /* code 0 --> No errors, return user data */
         } 
     });
 });
@@ -121,7 +122,7 @@ app.post('/selectClientInfo', (req, res) => {
 
 
 app.post('/finalizeClientPayment', (req, res) => {
-    dbF.finalizeClientPayment(req.body.email, req.body.modality, req.body.amount, process.env.DB_ENCRYPTKEY)
+    dbF.finalizeClientPayment(req.body.email, req.body.modality, req.body.amount, req.body.transID, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:1}) // code 1 --> Database error
@@ -169,7 +170,7 @@ app.post('/clientReviewInstructor', (req, res) => {
 
 
 app.post('/selectClientPaymentHistory', (req, res) => {
-    dbF.selectClientPaymentHistory(req.body.mail, process.env.DB_ENCRYPTKEY)
+    dbF.selectClientPaymentHistory(req.body.email, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:1}) // code 1 --> User does not exist or encrypt key is incorrect
@@ -185,7 +186,7 @@ app.post('/selectClientPaymentHistory', (req, res) => {
 
 
 app.post('/selectClientInstructorHistory', (req, res) => {
-    dbF.selectClientInstructorHistory(req.body.mail, process.env.DB_ENCRYPTKEY)
+    dbF.selectClientInstructorHistory(req.body.email, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:1}) // code 1 --> Database error
@@ -201,7 +202,7 @@ app.post('/selectClientInstructorHistory', (req, res) => {
 
 
 app.post('/addClientRewards', (req, res) => {
-    dbF.addClientRewards(req.body.mail, req.body.reward, process.env.DB_ENCRYPTKEY)
+    dbF.addClientRewards(req.body.email, req.body.reward, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:1}) // code 1 --> Database error
@@ -217,7 +218,7 @@ app.post('/addClientRewards', (req, res) => {
 
 
 app.post('/selectClientRewards', (req, res) => {
-    dbF.selectClientRewards(req.body.mail, process.env.DB_ENCRYPTKEY)
+    dbF.selectClientRewards(req.body.email, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:1}) // code 1 --> Database error
@@ -249,7 +250,7 @@ app.post('/selectClientPrograms', (req, res) => {
 
 
 app.post('/selectAvailableInstructors', (req, res) => {
-    dbF.selectAvailableInstructors()
+    dbF.selectAvailableInstructors(process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:1}) // code 1 --> Database error
