@@ -18,7 +18,8 @@ module.exports = {
     selectClientPrograms,
     selectAvailableInstructors,
     selectDefaultExercises,
-    selectDefaultPrograms
+    selectDefaultPrograms,
+    addUserImage
 }
 
 const dbconnection = mysql.createConnection({
@@ -344,6 +345,26 @@ function  selectDefaultPrograms() {
         });
     });
 };
+
+function addUserImage(mail, imagePath, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spUserAddImage(?,?,?)';
+
+        dbconnection.query(sql, [mail, imagePath, userKey], (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 0) {
+                resolve(0);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
 /*
 *******************************************
             USER DEFINED FUNCTIONS                

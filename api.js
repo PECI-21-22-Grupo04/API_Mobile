@@ -295,3 +295,18 @@ app.post('/selectDefaultPrograms', (req, res) => {
         } 
     });
 });
+
+app.post('/addUserImage', (req, res) => {
+    dbF.addUserImage(req.body.email, req.body.imagePath, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code:0}) // code 0 --> No errors, return user data
+        } 
+    });
+});
