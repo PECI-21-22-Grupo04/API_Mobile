@@ -136,6 +136,27 @@ app.post('/finalizeClientPayment', (req, res) => {
     });
 });
 
+app.post('/selectLatestClientPayment', (req, res) => {
+    dbF.selectLatestClientPayment(req.body.email, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2, paidDate: "", accountStatus: "free", plan: ""}) // code 2 --> User has not made any payment
+        }
+        else{
+            var modality;
+            if(data[0][0]["modality"] == "Monthly"){
+                modality = "monthly";
+            }
+            else{
+                modality = "yearly"
+            }
+            res.json({code:0, paidDate: data[0][0]["paymentDate"], accountStatus: "premium", plan: modality}) // code 0 --> No errors, return user data
+        }
+    });
+});
 
 app.post('/associateInstructor', (req, res) => {
     dbF.associateInstructor(req.body.clientEmail, req.body.instructorEmail, process.env.DB_ENCRYPTKEY)
@@ -151,6 +172,39 @@ app.post('/associateInstructor', (req, res) => {
         } 
     });
 });
+
+app.post('/isClientAssociated', (req, res) => {
+    dbF.isClientAssociated(req.body.email, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2, isAssociated: "no", associatedDate: "", associatedInstructor: ""}) // code 2 --> No association or encrypt key is incorrect
+        }
+        else{
+            res.json({code:0, isAssociated: "yes", associatedDate: data[0][0]["signedDate"], associatedInstructor: data[0][0]["mail"]})  // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
+app.post('/selectAssociatedInstructor', (req, res) => {
+    dbF.selectAssociatedInstructor(req.body.email, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> No association or encrypt key is incorrect
+        }
+        else{
+            res.json({code:0, data: data})  // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+
 
 
 app.post('/clientReviewInstructor', (req, res) => {

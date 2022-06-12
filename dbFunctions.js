@@ -9,7 +9,10 @@ module.exports = {
     addClientInfo,
     selectClientInfo,
     finalizeClientPayment,
+    selectLatestClientPayment,
     associateInstructor,
+    isClientAssociated,
+    selectAssociatedInstructor,
     clientReviewInstructor,
     selectClientPaymentHistory,
     selectClientInstructorHistory,
@@ -155,6 +158,25 @@ function finalizeClientPayment(mail, modality, amount, transID, userKey) {
     });
 };
 
+function selectLatestClientPayment(mail, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spSelectLatestClientPayment(?,?)';
+
+        dbconnection.query(sql, [mail, userKey], (err, data) => {
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) { 
+                resolve(data);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
 function associateInstructor(clientEmail, instructorEmail, userKey) {
     return new Promise((resolve) => {
 
@@ -166,6 +188,47 @@ function associateInstructor(clientEmail, instructorEmail, userKey) {
             }
             else if (typeof data !== 'undefined' && data["affectedRows"] == 0) { 
                 resolve(0);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function isClientAssociated(clientEmail, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spIsClientAssociated(?,?)';
+
+        dbconnection.query(sql, [clientEmail, userKey], (err, data) => {
+
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) { 
+                resolve(data);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function selectAssociatedInstructor(clientEmail, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spSelectAssociatedInstructor(?,?)';
+
+        dbconnection.query(sql, [clientEmail, userKey], (err, data) => {
+            console.log(err);
+            console.log(data);
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) { 
+                resolve(data);
             }
             else {
                 resolve(2);
