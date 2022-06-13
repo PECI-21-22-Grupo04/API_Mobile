@@ -222,8 +222,7 @@ function selectAssociatedInstructor(clientEmail, userKey) {
         var sql = 'CALL spSelectAssociatedInstructor(?,?)';
 
         dbconnection.query(sql, [clientEmail, userKey], (err, data) => {
-            console.log(err);
-            console.log(data);
+   
             if (err) {
                 resolve(1);
             }
@@ -243,10 +242,11 @@ function clientReviewInstructor(clientEmail, instructorEmail, rating, review, us
         var sql = 'CALL spClientReviewInstructor(?,?,?,?,?)';
 
         dbconnection.query(sql, [clientEmail, instructorEmail, rating, review, userKey], (err, data) => {
-            if (err && err.errno==1062) {
+
+            if (err) {
                 resolve(1);
             }
-            else if (typeof data !== 'undefined' && data["affectedRows"] == 0) { 
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 1) { 
                 resolve(0);
             }
             else {

@@ -322,6 +322,7 @@ app.post('/selectAvailableInstructors', (req, res) => {
 app.post('/selectDefaultExercises', (req, res) => {
     dbF.selectDefaultExercises()
     .then((data) => {
+
         if(data == 1){
             res.json({code:1}) // code 1 --> Database error
         }
