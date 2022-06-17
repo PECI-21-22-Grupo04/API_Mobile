@@ -83,7 +83,6 @@ app.post('/deleteClient', (req, res) => {
     });
 });
 
-
 app.post('/addClientInfo', (req, res) => {
     dbF.addClientInfo(req.body.email, req.body.height, req.body.weight, req.body.fitness,  parseInt(req.body.bmi), req.body.pathologies, process.env.DB_ENCRYPTKEY)
     .then((data) => {
@@ -98,7 +97,6 @@ app.post('/addClientInfo', (req, res) => {
         } 
     });
 });
-
 
 app.post('/selectClientInfo', (req, res) => {
     dbF.selectClientInfo(req.body.email, process.env.DB_ENCRYPTKEY)
@@ -120,7 +118,6 @@ app.post('/selectClientInfo', (req, res) => {
     });
 });
 
-
 app.post('/finalizeClientPayment', (req, res) => {
     dbF.finalizeClientPayment(req.body.email, req.body.modality, req.body.amount, req.body.transID, process.env.DB_ENCRYPTKEY)
     .then((data) => {
@@ -139,6 +136,7 @@ app.post('/finalizeClientPayment', (req, res) => {
 app.post('/selectLatestClientPayment', (req, res) => {
     dbF.selectLatestClientPayment(req.body.email, process.env.DB_ENCRYPTKEY)
     .then((data) => {
+
         if(data == 1){
             res.json({code:1}) // code 1 --> Database error
         }
@@ -188,7 +186,6 @@ app.post('/isClientAssociated', (req, res) => {
     });
 });
 
-
 app.post('/selectAssociatedInstructor', (req, res) => {
     dbF.selectAssociatedInstructor(req.body.email, process.env.DB_ENCRYPTKEY)
     .then((data) => {
@@ -203,9 +200,6 @@ app.post('/selectAssociatedInstructor', (req, res) => {
         } 
     });
 });
-
-
-
 
 app.post('/clientReviewInstructor', (req, res) => {
     dbF.clientReviewInstructor(req.body.clientEmail, req.body.instructorEmail, req.body.rating, req.body.review, process.env.DB_ENCRYPTKEY)
@@ -222,7 +216,6 @@ app.post('/clientReviewInstructor', (req, res) => {
     });
 });
 
-
 app.post('/selectClientPaymentHistory', (req, res) => {
     dbF.selectClientPaymentHistory(req.body.email, process.env.DB_ENCRYPTKEY)
     .then((data) => {
@@ -237,7 +230,6 @@ app.post('/selectClientPaymentHistory', (req, res) => {
         } 
     });
 });
-
 
 app.post('/selectClientInstructorHistory', (req, res) => {
     dbF.selectClientInstructorHistory(req.body.email, process.env.DB_ENCRYPTKEY)
@@ -254,7 +246,6 @@ app.post('/selectClientInstructorHistory', (req, res) => {
     });
 });
 
-
 app.post('/addClientRewards', (req, res) => {
     dbF.addClientRewards(req.body.email, req.body.reward, process.env.DB_ENCRYPTKEY)
     .then((data) => {
@@ -269,7 +260,6 @@ app.post('/addClientRewards', (req, res) => {
         } 
     });
 });
-
 
 app.post('/selectClientRewards', (req, res) => {
     dbF.selectClientRewards(req.body.email, process.env.DB_ENCRYPTKEY)
@@ -286,9 +276,8 @@ app.post('/selectClientRewards', (req, res) => {
     });
 });
 
-
 app.post('/selectClientPrograms', (req, res) => {
-    dbF.selectClientPrograms()
+    dbF.selectClientPrograms(req.body.email, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:1}) // code 1 --> Database error
@@ -301,7 +290,6 @@ app.post('/selectClientPrograms', (req, res) => {
         } 
     });
 });
-
 
 app.post('/selectAvailableInstructors', (req, res) => {
     dbF.selectAvailableInstructors(process.env.DB_ENCRYPTKEY)
@@ -317,7 +305,6 @@ app.post('/selectAvailableInstructors', (req, res) => {
         } 
     });
 });
-
 
 app.post('/selectDefaultExercises', (req, res) => {
     dbF.selectDefaultExercises()
@@ -335,7 +322,6 @@ app.post('/selectDefaultExercises', (req, res) => {
     });
 });
 
-
 app.post('/selectDefaultPrograms', (req, res) => {
     dbF.selectDefaultPrograms()
     .then((data) => {
@@ -347,6 +333,51 @@ app.post('/selectDefaultPrograms', (req, res) => {
         }
         else{
             res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+app.post('/selectAllProgramExercises', (req, res) => {
+    dbF.selectAllProgramExercises()
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+app.post('/finishWorkout', (req, res) => {
+    dbF.finishWorkout(req.body.email, req.body.progID, req.body.timeTaken, req.body.caloriesBurnt, req.body.heartRate, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code: 0}); // code 0 --> No errors, return user data
+        } 
+    });
+});
+
+app.post('/removeInstructorAssociation', (req, res) => {
+    dbF.removeInstructorAssociation(req.body.email, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code:0, isAssociated: "no", associatedDate: "", associatedInstructor: ""}) // code 0 --> No errors
         } 
     });
 });
@@ -365,3 +396,4 @@ app.post('/addUserImage', (req, res) => {
         } 
     });
 });
+

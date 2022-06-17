@@ -14,6 +14,7 @@ module.exports = {
     isClientAssociated,
     selectAssociatedInstructor,
     clientReviewInstructor,
+    removeInstructorAssociation,
     selectClientPaymentHistory,
     selectClientInstructorHistory,
     addClientRewards,
@@ -22,6 +23,8 @@ module.exports = {
     selectAvailableInstructors,
     selectDefaultExercises,
     selectDefaultPrograms,
+    selectAllProgramExercises,
+    finishWorkout,
     addUserImage
 }
 
@@ -338,6 +341,7 @@ function  selectClientPrograms(mail, userKey) {
         var sql = 'CALL  spSelectClientPrograms(?,?)';
 
         dbconnection.query(sql, [mail, userKey], (err, data) => {
+
             if (err) {
                 resolve(1);
             }
@@ -350,7 +354,6 @@ function  selectClientPrograms(mail, userKey) {
         });
     });
 };
-
 
 function  selectAvailableInstructors(userKey) {
     return new Promise((resolve) => {
@@ -371,7 +374,27 @@ function  selectAvailableInstructors(userKey) {
     });
 };
 
-function  selectDefaultExercises() {
+function removeInstructorAssociation(email, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spRemoveInstructorAssociation(?,?)';
+
+        dbconnection.query(sql, [email, userKey], (err, data) => {
+            console.log(err);
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 1) {
+                resolve(0);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function selectDefaultExercises() {
     return new Promise((resolve) => {
 
         var sql = 'CALL  spSelectDefaultExercises()';
@@ -390,10 +413,10 @@ function  selectDefaultExercises() {
     });
 };
 
-function  selectDefaultPrograms() {
+function selectDefaultPrograms() {
     return new Promise((resolve) => {
 
-        var sql = 'CALL  spSelectDefaultExercises()';
+        var sql = 'CALL  spSelectDefaultPrograms()';
 
         dbconnection.query(sql, (err, data) => {
             if (err) {
@@ -401,6 +424,48 @@ function  selectDefaultPrograms() {
             }
             else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
                 resolve(data);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function selectAllProgramExercises() {
+
+    return new Promise((resolve) => {
+
+        var sql = 'CALL  spSelectAllProgramExercises()';
+
+        dbconnection.query(sql, (err, data) => {
+
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
+                resolve(data);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function finishWorkout(email, progID, timeTaken, caloriesBurnt, heartRate, userKey) {
+
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spFinishWorkout(?,?,?,?,?,?)';
+
+        dbconnection.query(sql, [email, progID, timeTaken, caloriesBurnt, heartRate, userKey], (err, data) => {
+
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 1) {
+                resolve(0);
             }
             else {
                 resolve(2);
@@ -427,9 +492,3 @@ function addUserImage(mail, imagePath, userKey) {
         });
     });
 };
-
-/*
-*******************************************
-            USER DEFINED FUNCTIONS                
-*******************************************
-*/
