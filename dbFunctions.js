@@ -211,6 +211,7 @@ function associateInstructor(clientEmail, instructorEmail, userKey) {
         var sql = 'CALL spAssociateInstructor(?,?,?)';
 
         dbconnection.query(sql, [clientEmail, instructorEmail, userKey], (err, data) => {
+
             if (err && err.errno==1062) {
                 resolve(1);
             }
