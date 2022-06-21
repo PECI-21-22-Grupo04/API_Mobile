@@ -6,6 +6,7 @@ module.exports = {
     selectClient,
     createClient,
     deleteClient,
+    updateClient,
     addClientInfo,
     selectClientInfo,
     finalizeClientPayment,
@@ -24,7 +25,9 @@ module.exports = {
     selectDefaultExercises,
     selectDefaultPrograms,
     selectAllProgramExercises,
+    selectClientWorkoutHistory,
     finishWorkout,
+    updateFirebaseID,
     addUserImage
 }
 
@@ -110,10 +113,31 @@ function addClientInfo(mail, height, weight, fitness, bmi, pathologies, userKey)
 
         var sql = 'CALL spAddClientInfo(?,?,?,?,?,?,?)';
         dbconnection.query(sql, [mail, height, weight, fitness, bmi, pathologies, userKey], (err, data) => {
+            
             if (err && err.errno==1305) {
                 resolve(1);
             }
             else if (typeof data !== 'undefined' && data["affectedRows"] == 0) {
+                resolve(0);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function updateClient(mail, fName, lName, birthdate, sex, street, postCode, city, country, userKey) {
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spUpdateClient(?,?,?,?,?,?,?,?,?,?)';
+
+        dbconnection.query(sql, [mail, fName, lName, birthdate, sex, street, postCode, city, country, userKey], (err, data) => {
+
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 1) { 
                 resolve(0);
             }
             else {
@@ -142,12 +166,13 @@ function selectClientInfo(mail, userKey) {
     });
 };
 
-function finalizeClientPayment(mail, modality, amount, transID, userKey) {
+function finalizeClientPayment(mail, modality, amount, transID, doneDate, userKey) {
     return new Promise((resolve) => {
 
-        var sql = 'CALL spFinalizeClientPayment(?,?,?,?,?)';
+        var sql = 'CALL spFinalizeClientPayment(?,?,?,?,?,?)';
 
-        dbconnection.query(sql, [mail, modality, amount, transID, userKey], (err, data) => {
+        dbconnection.query(sql, [mail, modality, amount, transID, doneDate, userKey], (err, data) => {
+
             if (err) {
                 resolve(1);
             }
@@ -284,6 +309,7 @@ function selectClientInstructorHistory(mail, userKey) {
         var sql = 'CALL spSelectClientInstructorHistory(?,?)';
 
         dbconnection.query(sql, [mail, userKey], (err, data) => {
+
             if (err) {
                 resolve(1);
             }
@@ -380,7 +406,7 @@ function removeInstructorAssociation(email, userKey) {
         var sql = 'CALL spRemoveInstructorAssociation(?,?)';
 
         dbconnection.query(sql, [email, userKey], (err, data) => {
-            console.log(err);
+
             if (err) {
                 resolve(1);
             }
@@ -460,6 +486,48 @@ function finishWorkout(email, progID, timeTaken, caloriesBurnt, heartRate, userK
         var sql = 'CALL spFinishWorkout(?,?,?,?,?,?)';
 
         dbconnection.query(sql, [email, progID, timeTaken, caloriesBurnt, heartRate, userKey], (err, data) => {
+
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data["affectedRows"] == 1) {
+                resolve(0);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function selectClientWorkoutHistory(email, userKey) {
+
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spSelectClientWorkoutHistory(?,?)';
+
+        dbconnection.query(sql, [email, userKey], (err, data) => {
+
+            if (err) {
+                resolve(1);
+            }
+            else if (typeof data !== 'undefined' && data.length > 0 && data[0].length > 0) {
+                resolve(data);
+            }
+            else {
+                resolve(2);
+            }
+        });
+    });
+};
+
+function updateFirebaseID(email, firebaseID, userKey) {
+
+    return new Promise((resolve) => {
+
+        var sql = 'CALL spUpdateFirebaseID(?,?,?)';
+
+        dbconnection.query(sql, [email, firebaseID, userKey], (err, data) => {
 
             if (err) {
                 resolve(1);

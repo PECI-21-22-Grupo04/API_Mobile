@@ -17,8 +17,8 @@ app
     .use(express.urlencoded({ extended: true }))
 
 /* Listen to requests */
-const port = process.env.port || 8080;
-app.listen(port, () => console.log(`Listening on port ${port}`));
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
 
 /*
@@ -98,6 +98,24 @@ app.post('/addClientInfo', (req, res) => {
     });
 });
 
+app.post('/updateClient', (req, res) => {  
+    const dataValues = (req.body.birthdate.split('/'));
+    formattedBirthdate = dataValues[2]+"-"+dataValues[1]+"-"+dataValues[0];
+
+    dbF.updateClient(req.body.email, req.body.fname, req.body.lname, formattedBirthdate, req.body.sex, req.body.street, req.body.postCode, req.body.city, req.body.country, process.env.DB_ENCRYPTKEY).then((result) => {
+
+        if(result == 1){
+            res.json({code: 1}) 
+        }
+        else if(result == 2){
+            res.json({code: 2})
+        }
+        else{
+            res.json({code:0});
+        } 
+    });
+});
+
 app.post('/selectClientInfo', (req, res) => {
     dbF.selectClientInfo(req.body.email, process.env.DB_ENCRYPTKEY)
     .then((data) => {
@@ -108,18 +126,13 @@ app.post('/selectClientInfo', (req, res) => {
             res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
         }
         else{
-            var c_age = data[0][0]["age"];
-            var c_height = data[0][0]["height"];
-            var c_weight = data[0][0]["weight"];
-            var c_fitness = data[0][0]["fitness"];
-            var c_pathologies = data[0][0]["pathologies"];
-            res.json({code: 0, age: c_age, height: c_height, weight: c_weight, fitness: c_fitness, pathologies: c_pathologies}); // code 0 --> No errors, return user data
+            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
         } 
     });
 });
 
 app.post('/finalizeClientPayment', (req, res) => {
-    dbF.finalizeClientPayment(req.body.email, req.body.modality, req.body.amount, req.body.transID, process.env.DB_ENCRYPTKEY)
+    dbF.finalizeClientPayment(req.body.email, req.body.modality, req.body.amount, req.body.transID, req.body.doneDate, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
             res.json({code:1}) // code 1 --> Database error
@@ -378,6 +391,36 @@ app.post('/removeInstructorAssociation', (req, res) => {
         }
         else{
             res.json({code:0, isAssociated: "no", associatedDate: "", associatedInstructor: ""}) // code 0 --> No errors
+        } 
+    });
+});
+
+app.post('/selectClientWorkoutHistory', (req, res) => {
+    dbF.selectClientWorkoutHistory(req.body.email, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code:0, data: data}) // code 0 --> No errors
+        } 
+    });
+});
+
+app.post('/updateFirebaseID', (req, res) => {
+    dbF.updateFirebaseID(req.body.email, req.body.firebaseID, process.env.DB_ENCRYPTKEY)
+    .then((data) => {
+        if(data == 1){
+            res.json({code:1}) // code 1 --> Database error
+        }
+        else if(data == 2){
+            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+        }
+        else{
+            res.json({code:0, data: data}) // code 0 --> No errors
         } 
     });
 });
