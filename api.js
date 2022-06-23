@@ -17,8 +17,7 @@ app
     .use(express.urlencoded({ extended: true }))
 
 /* Listen to requests */
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+app.listen(process.env.PORT || 8080);
 
 
 /*
