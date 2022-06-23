@@ -28,10 +28,10 @@ app.listen(process.env.PORT || 8080);
 app.post('/selectClient', (req, res) => {
     dbF.selectClient(req.body.email, process.env.DB_ENCRYPTKEY).then((result) => {
         if(result == 1){
-            res.json({code:1, msg: "Ocorreu um erro. Por favor tente mais tarde"}) /* code 1 --> Database error */
+            res.json({code:1, msg: "Ocorreu um erro. Por favor tente mais tarde"}) // code 1 --> Database error 
         }
         else if(result == 2){
-            res.json({code:2}) /* code 2 --> User does not exist or encrypt key is incorrect */
+            res.json({code:2}) // code 2 --> Client does not exist or encrypt key is incorrect 
         }
         else{
             var c_mail = result[0][0]["mail"];
@@ -46,7 +46,7 @@ app.post('/selectClient', (req, res) => {
             var c_registerDate = result[0][0]["registerDate"];
             var c_pathologies = result[0][0]["pathologies"];
             var c_imagePath = result[0][0]["imagePath"];
-            res.json({code: 0, msg:"Uma conta já existe com este email", mailC: c_mail, firstNameC: c_fname, lastNameC: c_lname, birthdateC: c_birthdate, sexC: c_sex, streetC: c_street, postCodeC: c_postCode, cityC: c_city, countryC: c_country, registerDateC: c_registerDate, pathologiesC: c_pathologies, imagePathC: c_imagePath}); /* code 0 --> No errors, return user data */
+            res.json({code: 0, msg:"Uma conta já existe com este email", mailC: c_mail, firstNameC: c_fname, lastNameC: c_lname, birthdateC: c_birthdate, sexC: c_sex, streetC: c_street, postCodeC: c_postCode, cityC: c_city, countryC: c_country, registerDateC: c_registerDate, pathologiesC: c_pathologies, imagePathC: c_imagePath}); // code 0 --> Return client data
         } 
     });
 });
@@ -57,13 +57,13 @@ app.post('/createClient', (req, res) => {
 
     dbF.createClient(req.body.email, req.body.fname, req.body.lname, formattedBirthdate, req.body.sex, req.body.street, req.body.postCode, req.body.city, req.body.country, process.env.DB_ENCRYPTKEY).then((result) => {
         if(result == 1){
-            res.json({msg:"Já existe uma conta com este email"}) // code 1 --> Email already exists
+            res.json({msg:"Já existe uma conta com este email"}) // code 1 --> Client with the provided email already exists
         }
         else if(result == 2){
             res.json({msg:"Ocorreu um erro. Por favor tente mais tarde"}) // code 2 --> Database error
         }
         else{
-            res.json({code:0}); // code 0 --> No errors, insert was sucessful
+            res.json({code:0}); // code 0 --> Client was successfully created
         } 
     });
 });
@@ -74,10 +74,10 @@ app.post('/deleteClient', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(result == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client does not exist or encrypt key is incorrect
         }
         else{
-            res.json({code: 0}); // code 0 --> No errors, delete was sucessful
+            res.json({code: 0}); // code 0 --> Client was successfully deleted
         } 
     });
 });
@@ -86,13 +86,13 @@ app.post('/addClientInfo', (req, res) => {
     dbF.addClientInfo(req.body.email, req.body.height, req.body.weight, req.body.fitness,  parseInt(req.body.bmi), req.body.pathologies, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
-            res.json({code:"O utilizador não existe!"}) // code 1 --> Database error
+            res.json({code:"O utilizador não existe!"}) // code 1 --> Client does not exist or encrypt key is incorrect
         }
         else if(data == 2){
-            res.json({code:"Ocorreu um erro. Por favor tente mais tarde"}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:"Ocorreu um erro. Por favor tente mais tarde"}) // code 2 --> Database error
         }
         else{
-            res.json({code: 0}); // code 0 --> No errors, user info was added sucessfully
+            res.json({code: 0}); // code 0 --> Information was successfully added
         } 
     });
 });
@@ -104,13 +104,13 @@ app.post('/updateClient', (req, res) => {
     dbF.updateClient(req.body.email, req.body.fname, req.body.lname, formattedBirthdate, req.body.sex, req.body.street, req.body.postCode, req.body.city, req.body.country, process.env.DB_ENCRYPTKEY).then((result) => {
 
         if(result == 1){
-            res.json({code: 1}) 
+            res.json({code: 1})  // code 1 --> Database error
         }
         else if(result == 2){
-            res.json({code: 2})
+            res.json({code: 2}) // code 2 --> Client does not exist or encrypt key is incorrect
         }
         else{
-            res.json({code:0});
+            res.json({code:0}); // code 0 --> Client was successfully updated
         } 
     });
 });
@@ -122,10 +122,10 @@ app.post('/selectClientInfo', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client does not exist or encrypt key is incorrect
         }
         else{
-            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+            res.json({code: 0, data: data}); // code 0 --> Return requested data
         } 
     });
 });
@@ -137,10 +137,10 @@ app.post('/finalizeClientPayment', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client does not exist or encrypt key is incorrect
         }
         else{
-            res.json({code:0}) // code 0 --> No errors, return user data
+            res.json({code:0}) // code 0 --> Payment was successfully saved
         } 
     });
 });
@@ -153,7 +153,7 @@ app.post('/selectLatestClientPayment', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2, paidDate: "", accountStatus: "free", plan: ""}) // code 2 --> User has not made any payment
+            res.json({code:2, paidDate: "", accountStatus: "free", plan: ""}) // code 2 --> Client hasnt made any payments
         }
         else{
             var modality;
@@ -163,7 +163,7 @@ app.post('/selectLatestClientPayment', (req, res) => {
             else{
                 modality = "yearly"
             }
-            res.json({code:0, paidDate: data[0][0]["paymentDate"], accountStatus: "premium", plan: modality}) // code 0 --> No errors, return user data
+            res.json({code:0, paidDate: data[0][0]["paymentDate"], accountStatus: "premium", plan: modality}) // code 0 --> Client has made payments, return information about the latest one
         }
     });
 });
@@ -175,10 +175,10 @@ app.post('/associateInstructor', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client/Instructor does not exist or encrypt key is incorrect
         }
         else{
-            res.json({code:0}) // code 0 --> No errors, return user data
+            res.json({code:0}) // code 0 --> Client has been successfully associated to an instructor
         } 
     });
 });
@@ -190,10 +190,10 @@ app.post('/isClientAssociated', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2, isAssociated: "no", associatedDate: "", associatedInstructor: ""}) // code 2 --> No association or encrypt key is incorrect
+            res.json({code:2, isAssociated: "no", associatedDate: "", associatedInstructor: ""}) // code 2 --> Client has never been associated
         }
         else{
-            res.json({code:0, isAssociated: "yes", associatedDate: data[0][0]["signedDate"], associatedInstructor: data[0][0]["mail"]})  // code 0 --> No errors, return user data
+            res.json({code:0, isAssociated: "yes", associatedDate: data[0][0]["signedDate"], associatedInstructor: data[0][0]["mail"]})  // code 0 --> Client is/has been associated, return information about latest one
         } 
     });
 });
@@ -205,10 +205,10 @@ app.post('/selectAssociatedInstructor', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> No association or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client is not associated
         }
         else{
-            res.json({code:0, data: data})  // code 0 --> No errors, return user data
+            res.json({code:0, data: data})  // code 0 --> Client is associated, return information about the instructor
         } 
     });
 });
@@ -220,10 +220,10 @@ app.post('/clientReviewInstructor', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client/Instructor does not exist or encrypt key is incorrect
         }
         else{
-            res.json({code:0}) // code 0 --> No errors, return user data
+            res.json({code:0}) // code 0 --> Review was successfully saved
         } 
     });
 });
@@ -232,13 +232,13 @@ app.post('/selectClientPaymentHistory', (req, res) => {
     dbF.selectClientPaymentHistory(req.body.email, process.env.DB_ENCRYPTKEY)
     .then((data) => {
         if(data == 1){
-            res.json({code:1}) // code 1 --> User does not exist or encrypt key is incorrect
+            res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> Database error
+            res.json({code:2}) // code 2 --> Client does not exist or encrypt key is incorrect
         }
         else{
-            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+            res.json({code: 0, data: data}); // code 0 --> Return client payment history
         } 
     });
 });
@@ -250,10 +250,10 @@ app.post('/selectClientInstructorHistory', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client does not exist or encrypt key is incorrect
         }
         else{
-            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+            res.json({code: 0, data: data}); // code 0 --> Return client instructor history
         } 
     });
 });
@@ -265,10 +265,10 @@ app.post('/addClientRewards', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client does not exist or encrypt key is incorrect
         }
         else{
-            res.json({code:0}) // code 0 --> No errors, return user data
+            res.json({code:0}) // code 0 --> Reward has been given to client
         } 
     });
 });
@@ -280,10 +280,10 @@ app.post('/selectClientRewards', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client has no rewards
         }
         else{
-            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+            res.json({code: 0, data: data}); // code 0 --> Return client rewards
         } 
     });
 });
@@ -295,10 +295,10 @@ app.post('/selectClientPrograms', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client has no private program associated 
         }
         else{
-            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+            res.json({code: 0, data: data}); // code 0 --> Return clients private programs
         } 
     });
 });
@@ -310,10 +310,10 @@ app.post('/selectAvailableInstructors', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> There are no available instructors
         }
         else{
-            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+            res.json({code: 0, data: data}); // code 0 --> Return available instructors
         } 
     });
 });
@@ -326,10 +326,10 @@ app.post('/selectDefaultExercises', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> There are no available free exercises
         }
         else{
-            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+            res.json({code: 0, data: data}); // code 0 --> Return free exercises
         } 
     });
 });
@@ -341,10 +341,10 @@ app.post('/selectDefaultPrograms', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> There are no available free programs
         }
         else{
-            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+            res.json({code: 0, data: data}); // code 0 --> Return free programs
         } 
     });
 });
@@ -356,10 +356,10 @@ app.post('/selectAllProgramExercises', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> There are no exercises associated to programs
         }
         else{
-            res.json({code: 0, data: data}); // code 0 --> No errors, return user data
+            res.json({code: 0, data: data}); // code 0 --> Return program-exercise association
         } 
     });
 });
@@ -371,10 +371,10 @@ app.post('/finishWorkout', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client does not exist or encrypt key is incorrect
         }
         else{
-            res.json({code: 0}); // code 0 --> No errors, return user data
+            res.json({code: 0}); // code 0 --> Information about workout was saved
         } 
     });
 });
@@ -386,10 +386,10 @@ app.post('/removeInstructorAssociation', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client/Instructor does not exist or encrypt key is incorrect
         }
         else{
-            res.json({code:0, isAssociated: "no", associatedDate: "", associatedInstructor: ""}) // code 0 --> No errors
+            res.json({code:0, isAssociated: "no", associatedDate: "", associatedInstructor: ""}) // code 0 --> Association between client-instructor was removed
         } 
     });
 });
@@ -401,10 +401,10 @@ app.post('/selectClientWorkoutHistory', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client does not have any workouts done
         }
         else{
-            res.json({code:0, data: data}) // code 0 --> No errors
+            res.json({code:0, data: data}) // code 0 --> Return client workout history
         } 
     });
 });
@@ -416,10 +416,10 @@ app.post('/updateFirebaseID', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client does not exist or encrypt key is incorrect
         }
         else{
-            res.json({code:0, data: data}) // code 0 --> No errors
+            res.json({code:0, data: data}) // code 0 --> Clients firebaseID has been updated
         } 
     });
 });
@@ -431,11 +431,15 @@ app.post('/addUserImage', (req, res) => {
             res.json({code:1}) // code 1 --> Database error
         }
         else if(data == 2){
-            res.json({code:2}) // code 2 --> User does not exist or encrypt key is incorrect
+            res.json({code:2}) // code 2 --> Client does not exist or encrypt key is incorrect
         }
         else{
-            res.json({code:0}) // code 0 --> No errors, return user data
+            res.json({code:0}) // code 0 --> Clients image path has been saved
         } 
     });
 });
 
+//The 404 Route 
+app.get('*', function(req, res){
+    res.status(404).send('RUNX: This action cannot be done.');
+  });
